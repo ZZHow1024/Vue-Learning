@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="ZZHow,前端,Vue,Web开发">
+    <meta name="description" content="案例：动态成绩单">
+    <meta name="author" content="ZZHow">
+    <title>动态成绩单</title>
+    <style type="text/css">
+        table {
+            border-collapse: collapse; /* 将表格边框合并 */
+            width: 100%; /* 使表格宽度占满容器 */
+        }
+        thead {
+            background-color: rgba(0, 0, 0, 30%);
+        }
+        th, td {
+            border: 1px solid black; /* 添加边框 */
+            padding: 8px; /* 内边距 */
+            text-align: center; /* 文本居中对齐 */
+        }
+        button {
+            cursor: pointer;
+        }
+        .form {
+            display: flex;
+            justify-content: center; /* 水平居中 */
+            border: 1px solid black; /* 可视化容器边框 */
+        }
+        .add {
+            display: flex;
+            justify-content: center; /* 水平居中 */
+            width: 100%; /* 确保按钮在父容器中居中 */
+        }
+        .red {
+            color: red;
+        }
+    </style>
+<body>
+<div id="app">
+    <div class="table">
+        <table>
+            <thead>
+                <tr>
+                    <td colspan="4">
+                        动态成绩单
+                    </td>
+                </tr>
+                <tr>
+                    <td>编号</td>
+                    <td>科目</td>
+                    <td>成绩</td>
+                    <td>操作</td>
+                </tr>
+            </thead>
+            <tbody v-if="list.length > 0">
+                <tr v-for="(item, index) in list">
+                    <td>{{ index + 1 }}</td>
+                    <td>{{ item.subject }}</td>
+                    <td :class="{red: item.score < 60}">{{ item.score }}</td>
+                    <td><button @click="del(item.id)">删除</button></td>
+                </tr>
+            </tbody>
+            <tbody v-else>
+                <tr>
+                    <td colspan="4">暂无数据</td>
+                </tr>
+            </tbody>
+            <tfoot>
+            <tr>
+                <td colspan="4">总分：{{ sumScore }}，平均分：{{ avgScore }}</td>
+            </tr>
+            </tfoot>
+        </table>
+
+        <div class="form">
+            <div class="form-item">
+                <label>
+                    科目：
+                    <input v-model.trim="subject" type="text">
+                </label>
+                <br>
+                <label>
+                    成绩：
+                    <input v-model.number="score" type="text">
+                </label>
+                <br>
+                <button @click="add" class="add">添加</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+<script>
+    const app = new Vue({
+        el: '#app',
+        data: {
+            list: [
+                {id: 1, subject: '挂科测试', score: 59},
+                {id: 2, subject: '高等数学', score: 90},
+                {id: 3, subject: '面向对象技术', score: 100}
+            ],
+            subject: '',
+            score: ''
+        },
+        methods: {
+            del(id) {
+                this.list = this.list.filter(item => item.id !== id);
+            },
+            add() {
+                if(!this.subject) {
+                    alert("请输入科目。");
+                    return;
+                }
+                if(typeof this.score !== 'number' || this.score < 0 || this.score > 100) {
+                    alert("请输入正确的成绩。");
+                    return;
+                }
+
+                this.list.push({
+                    id: +new Date(),
+                    subject: this.subject,
+                    score: this.score
+                });
+
+                this.subject = this.score = '';
+            }
+        },
+        computed: {
+            sumScore() {
+                return this.list.reduce((sum, item) => sum + item.score, 0);
+            },
+            avgScore() {
+                if(this.list.length === 0)
+                    return 0;
+                return (this.sumScore / this.list.length).toFixed(2);
+            }
+        }
+    })
+</script>
+</body>
+</html>

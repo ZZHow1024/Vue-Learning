@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="ZZHow,前端,Vue,Web开发">
+    <meta name="description" content="综合案例：水果购物车">
+    <meta name="author" content="ZZHow">
+    <title>水果购物车</title>
+    <style type="text/css">
+        table {
+            border-collapse: collapse; /* 将表格边框合并 */
+            width: 100%; /* 使表格宽度占满容器 */
+        }
+
+        thead {
+            background-color: rgba(0, 0, 0, 30%);
+        }
+
+        th, td {
+            border: 1px solid black; /* 添加边框 */
+            padding: 8px; /* 内边距 */
+            text-align: center; /* 文本居中对齐 */
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .point {
+            cursor: pointer;
+        }
+
+        .num-input {
+            width: 10%;
+        }
+
+        .select-all {
+            float: left;
+            margin-top: 15px;
+        }
+
+        .checkout {
+            float: right;
+        }
+
+        .total-price {
+            font-size: 30px;
+        }
+
+        .active {
+            background-color: rgba(0, 0, 0, 10%);
+        }
+    </style>
+</head>
+<div id="app">
+    <div class="main">
+        <table>
+            <thead>
+            <tr>
+                <td colspan="6">
+                    水果购物车
+                </td>
+            </tr>
+            <tr>
+                <td>选中</td>
+                <td>水果</td>
+                <td>单价</td>
+                <td>个数</td>
+                <td>小记</td>
+                <td>操作</td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr v-for="(item, index) in fruitList" v-bind:class="{active: item.isChecked}">
+                <td><label><input v-model="item.isChecked" type="checkbox" name="苹果" class="point"></label></td>
+                <td>{{ item.name }}</td>
+                <td>{{ item.price }}</td>
+                <td>
+                    <button v-bind:disabled="!(item.num > 1)" @click="sub(item.id)">-</button>
+                    <label>
+                        <input v-model.number="item.num" type="text" class="num-input">
+                    </label>
+                    <button v-bind:disabled="!(item.num < 10)" @click="add(item.id)">+</button>
+                </td>
+                <td>{{ item.price * item.num }}</td>
+                <td>
+                    <button @click="del(item.id)">删除</button>
+                </td>
+            </tr>
+            <tr v-if="fruitList.length <= 0">
+                <td colspan="6">空空如也</td>
+            </tr>
+            </tbody>
+
+            <tfoot>
+            <tr>
+                <td colspan="6">
+                    <label class="point select-all">
+                        <input v-model="isAll" type="checkbox" class="point">
+                        全选
+                    </label>
+                    <span class="checkout">
+                        总价：
+                        <span class="total-price">¥{{ totalPrice }}</span>
+                        <button>结算({{ totalCount }})</button>
+                    </span>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="6">
+                    <button @click="reset">恢复默认</button>
+                    <button @click="clear">清理缓存</button>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+</div>
+<body>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+
+<script>
+    const defaultFruitList = [
+        {
+            id: 1,
+            name: '苹果',
+            isChecked: false,
+            num: 2,
+            price: 6
+        },
+        {
+            id: 2,
+            name: '桃子',
+            isChecked: false,
+            num: 3,
+            price: 12
+        },
+        {
+            id: 3,
+            name: '梨',
+            isChecked: false,
+            num: 1,
+            price: 10
+        }];
+
+    const app = new Vue({
+        el: '#app',
+
+        data: {
+            fruitList: JSON.parse(window.localStorage.getItem('fruitList')) || defaultFruitList
+        },
+
+        methods: {
+            del(id) {
+                this.fruitList = this.fruitList.filter(item => item.id !== id);
+            },
+            add(id) {
+                let fruit = this.fruitList.find(item => item.id === id);
+
+                if (fruit.num < 10)
+                    fruit.num++;
+            },
+            sub(id) {
+                let fruit = this.fruitList.find(item => item.id === id);
+
+                if (fruit.num > 1)
+                    fruit.num--;
+            },
+            reset() {
+                this.clear();
+                location.reload();
+            },
+            clear() {
+                window.localStorage.clear();
+            }
+        },
+
+        computed: {
+            isAll: {
+                get() {
+                    return this.fruitList.every(item => item.isChecked);
+                },
+                set(value) {
+                    this.fruitList.forEach(item => item.isChecked = value);
+                }
+            },
+            totalCount() {
+                return this.fruitList.reduce((sum, item) => sum + (item.isChecked ? item.num : 0), 0);
+            },
+            totalPrice() {
+                return this.fruitList.reduce((sum, item) => sum + (item.isChecked ? item.price * item.num : 0), 0);
+            }
+        },
+
+        watch: {
+            fruitList: {
+                deep: true,
+                handler(newValue) {
+                    let fruit;
+                    fruit = this.fruitList.find(item => !(1 <= item.num && item.num <= 10));
+
+                    if (fruit !== undefined)
+                        fruit.num = fruit.num < 1 ? 1 : 10;
+
+                    //将数据存入本地（转 JSON）
+                    window.localStorage.setItem('fruitList', JSON.stringify(this.fruitList));
+                }
+            }
+        }
+    })
+</script>
+</body>
+</html>
