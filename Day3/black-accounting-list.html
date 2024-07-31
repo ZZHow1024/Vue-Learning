@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="keywords" content="ZZHow,前端,Vue,Web开发">
+    <meta name="description" content="综合案例：小黑记账清单">
+    <meta name="author" content="ZZHow">
+    <title>小黑记账清单</title>
+    <style type="text/css">
+        table {
+            border-collapse: collapse; /* 将表格边框合并 */
+            width: 100%; /* 使表格宽度占满容器 */
+        }
+
+        thead {
+            background-color: rgba(0, 0, 0, 30%);
+        }
+
+        th, td {
+            border: 1px solid black; /* 添加边框 */
+            padding: 8px; /* 内边距 */
+            text-align: center; /* 文本居中对齐 */
+        }
+
+        button {
+            cursor: pointer;
+        }
+
+        .red {
+            color: red;
+        }
+
+        .total {
+            font-size: 30px;
+        }
+
+        #main {
+            flex: none;
+            border: 1px solid black; /* 添加边框 */
+            border-collapse: collapse; /* 将表格边框合并 */
+            width: 100%; /* 使表格宽度占满容器 */
+            height: 60vh;
+            box-sizing: border-box;
+        }
+    </style>
+<body>
+<div id="app">
+    <div class="table">
+        <table>
+            <thead>
+            <tr>
+                <td colspan="4">
+                    小黑记账清单
+                </td>
+            </tr>
+            <tr v-for="">
+                <td>编号</td>
+                <td>消费名称</td>
+                <td>消费价格</td>
+                <td>操作</td>
+            </tr>
+            </thead>
+
+            <tbody>
+            <tr v-for="(item, index) in list">
+                <td> {{ index + 1 }}</td>
+                <td> {{ item.name }}</td>
+                <td v-bind:class=" {red: item.price > 500} "> ¥ {{ item.price.toFixed(2) }}</td>
+                <td>
+                    <button @click="del(item.id)">删除</button>
+                </td>
+            </tr>
+            <tr v-if="list == null || list.length <= 0">
+                <td colspan="4">空空如也</td>
+            </tr>
+            </tbody>
+
+            <tfoot>
+            <tr>
+                <td colspan="4"><span class="total">总计：¥{{ totalPrice.toFixed(2) }}</span></td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <label><input v-model.trim="commodity.name" type="text" placeholder="消费名称"></label>
+                    <label><input v-model.trim.number="commodity.price" type="text" placeholder="消费价格"></label>
+                    <button @click="add">添加账单</button>
+                </td>
+            </tr>
+            <tr>
+                <td colspan="4">
+                    <button @click="reloadWindow">刷新</button>
+                    <button @click="reset">重置账单</button>
+                </td>
+            </tr>
+            </tfoot>
+        </table>
+    </div>
+
+    <!-- 饼状图 -->
+    <div class="echarts-box" id="main"></div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/echarts@5.5.1/dist/echarts.min.js"></script>
+
+<script>
+    const app = new Vue({
+        el: '#app',
+
+        data: {
+            list: [],
+            commodity: {
+                name: '',
+                price: '',
+                creator: ''
+            },
+            option: {
+                title: {
+                    text: '账单',
+                    subtext: 'Bill',
+                    left: 'center'
+                },
+                tooltip: {
+                    trigger: 'item'
+                },
+                legend: {
+                    orient: 'vertical',
+                    left: 'left'
+                },
+                series: [
+                    {
+                        name: '消费账单',
+                        type: 'pie',
+                        radius: '50%',
+                        data: [],
+                        emphasis: {
+                            itemStyle: {
+                                shadowBlur: 10,
+                                shadowOffsetX: 0,
+                                shadowColor: 'rgba(0, 0, 0, 0.5)'
+                            }
+                        }
+                    }
+                ]
+            }
+        },
+
+        created() {
+            this.getList();
+        },
+
+        mounted() {
+            this.myChart = echarts.init(document.querySelector('#main'));
+            this.myChart.setOption(this.option);
+
+            window.addEventListener("resize", function () {
+                clearTimeout(this.reloadTimer);
+                this.reloadTimer = setTimeout(function () {
+                    location.reload();
+                }, 300);
+            });
+        },
+
+        methods: {
+            async getList() {
+                let res = null;
+
+                try {
+                    res = await axios.get('http://localhost:8080/bill', {
+                        params: {
+                            creator: '小黑'
+                        }
+                    });
+                } catch (e) {
+                    setTimeout(function () {
+                        alert("请检查后端程序：" + e);
+                    }, 200);
+                }
+
+                if (res !== null)
+                    this.list = res.data.data
+
+                //更新图标
+                this.myChart.setOption({
+                    series: [
+                        {
+                            data: this.list.map(item => ({value: item.price, name: item.name}))
+                        }
+                    ]
+                });
+            },
+            async add() {
+                if (!this.commodity.name) {
+                    window.alert("请输入消费名称。");
+                    return;
+                }
+                if (typeof this.commodity.price !== "number" || this.commodity.price < 0) {
+                    window.alert("请输入正确的消费价格。")
+                    return;
+                }
+                this.commodity.creator = "小黑";
+                try {
+                    let res = await axios.post('http://localhost:8080/bill', this.commodity);
+                    this.commodity = {name: '', price: '', creator: ''};
+                    this.getList();
+                } catch (e) {
+                    setTimeout(function () {
+                        alert("请检查后端程序：" + e);
+                    }, 200);
+                }
+            },
+            async reset() {
+                try {
+                    await axios.post('http://localhost:8080/bill', {id: -1});
+                    this.getList();
+                } catch (e) {
+                    setTimeout(function () {
+                        alert("请检查后端程序：" + e);
+                    }, 200);
+                }
+            },
+            reloadWindow() {
+                location.reload();
+            },
+            async del(id) {
+                try {
+                    await axios.delete(`http://localhost:8080/bill/${id}`);
+                } catch (e) {
+                    setTimeout(function () {
+                        alert("请检查后端程序：" + e);
+                    }, 200);
+                }
+
+                this.getList();
+            }
+        },
+
+        computed: {
+            totalPrice() {
+                return this.list.reduce((sum, item) => sum + item.price, 0);
+            }
+        }
+    })
+</script>
+</body>
+</html>

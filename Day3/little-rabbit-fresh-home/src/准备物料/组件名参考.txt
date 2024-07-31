@@ -1,0 +1,16 @@
+XtxShortCut
+XtxHeaderNav
+XtxBanner
+XtxNewGoods
+XtxHotBrand
+XtxTopic
+XtxFooter
+
+
+XtxShortCut  => 快捷链接
+XtxHeaderNav => 顶部导航
+XtxBanner    => 轮播区域
+XtxNewGoods  => 新鲜好物
+XtxHotBrand  => 热门品牌
+XtxTopic     => 最新专题
+XtxFooter    => 版权底部
