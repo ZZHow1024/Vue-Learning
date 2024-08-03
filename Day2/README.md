@@ -124,7 +124,7 @@
             - unshift 修改数组更新视图
         4. 统计总分，求平均分
             - 计算属性 reduce 求和
-    - 案例演示：[dynamic-report-card.html](./dynamic-report-card.html)
+    - 案例演示：[**dynamic-report-card.html**](./dynamic-report-card.html)
 
 # watch侦听器
 
@@ -194,4 +194,4 @@
     4. 全选反选：计算属性 `computed`、完整写法 `get`/ `set`。
     5. 统计选中的总价和总数量：计算属性 `computed` 、`reduce`条件求和。
     6. 持久化到本地：`watch` 监视，`localStorage`，`JSON.stringify`，`JSON.parse`。
-- 案例演示：[shopping-cart.html](./shopping-cart.html)
+- 案例演示：[**shopping-cart.html**](./shopping-cart.html)

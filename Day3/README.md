@@ -53,9 +53,9 @@
     - 饼图渲染
         - **mounted** 初始化 echarts 实例 → 渲染函数中 **setOption** 动态更新饼图(**map**)
 - 案例演示：
-    - 后端 Spring Boot Project - [day3-backend](https://github.com/ZZHow1024/Vue-Learning/tree/main/Day3/day3-backend)
-    - 后端 JAR 包 - [day3-backend.jar](https://github.com/ZZHow1024/Vue-Learning/blob/main/Day3/day3-backend.jar)
-    - 前端页面 - [black-accounting-list.html](https://github.com/ZZHow1024/Vue-Learning/blob/main/Day3/black-accounting-list.html)
+    - 后端 Spring Boot Project - [**day3-backend**](https://github.com/ZZHow1024/Vue-Learning/tree/main/Day3/day3-backend)
+    - 后端 JAR 包 - [**day3-backend.jar**](https://github.com/ZZHow1024/Vue-Learning/blob/main/Day3/day3-backend.jar)
+    - 前端页面 - [**black-accounting-list.html**](https://github.com/ZZHow1024/Vue-Learning/blob/main/Day3/black-accounting-list.html)
 
 # 工程化开发入门
 
@@ -149,4 +149,4 @@
     2. 根据设计图，编写组件 HTML 结构，CSS 样式。
     3. 拆分封装通用小组件（局部或全局注册）。
     4. 通过 JavaScript 动态渲染，实现功能。
-- 案例演示：Vue Project - [little-rabbit-fresh-home](https://github.com/ZZHow1024/Vue-Learning/tree/main/Day3/little-rabbit-fresh-home)
+- 案例演示：Vue Project - [**little-rabbit-fresh-home**](https://github.com/ZZHow1024/Vue-Learning/tree/main/Day3/little-rabbit-fresh-home)

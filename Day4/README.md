@@ -120,7 +120,7 @@
         - 监听点击 → **子传父**通知父组件 → 父组件清空
     - 持久化存储
         - watch 监视数据变化，持久化到本地。
-- 案例演示：[little-black-notebook-component-edition](https://github.com/ZZHow1024/Vue-Learning/tree/main/Day4/little-black-notebook-component-edition)
+- 案例演示：[**little-black-notebook-component-edition**](https://github.com/ZZHow1024/Vue-Learning/tree/main/Day4/little-black-notebook-component-edition)
 
 # 非父子（扩展）
 
