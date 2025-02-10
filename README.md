@@ -10,7 +10,7 @@
 
 # 学习路线
 
-![Vue学习路线](https://www.notion.so/image/https%3A%2F%2Fprod-files-secure.s3.us-west-2.amazonaws.com%2F4b165318-6383-451c-8845-110b786c9f0a%2F144d2405-2c70-4e23-8d50-ec656042fd99%2FVue%25E5%25AD%25A6%25E4%25B9%25A0%25E8%25B7%25AF%25E7%25BA%25BF.png?table=block&id=0b83253f-5092-4617-a24b-c69f1e96f7b9&t=0b83253f-5092-4617-a24b-c69f1e96f7b9&width=708&cache=v2)
+![Vue学习路线](./VueLearningPath.png)
 
 Vue学习路线
 
